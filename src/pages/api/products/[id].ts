@@ -1,13 +1,38 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "@/lib/prisma";
 
-type Data = {
-  name: string;
-};
-
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse
 ) {
+  const { method } = req;
+  const id = req.query.id as string;
 
-  res.status(200).json({ name: "John Doe" }); 
+  switch (method) {
+    case "GET":
+      try {
+        const product = await prisma.product.findUnique({
+          where: { id },
+        });
+
+        if (!product) {
+          return res.status(404).json({
+            success: false,
+            error: "Product not found",
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: product,
+        });
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Server Error",
+        });
+      }
+ 
+  }
 }
