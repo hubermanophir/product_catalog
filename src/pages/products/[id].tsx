@@ -20,19 +20,19 @@ export default function ProductDetailsPage() {
 
   useEffect(() => {
     if (id) {
-      // Fetch product details
-      fetch(`/api/products/${id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log({ data });
-          setProduct(data.product);
-          setLoading(false);
-        });
+      (async () => {
+        // Fetch product details
+        const productResponse = await fetch(`/api/products/${id}`);
+        const productsData = await productResponse.json();
+        setProduct(productsData.product);
+        // Fetch product reviews
+        const reviewsResponse = await fetch(`/api/reviews/${id}`);
 
-      // Fetch product reviews
-      fetch(`/api/reviews/${id}`)
-        .then((response) => response.json())
-        .then((data) => setReviews(data.reviews));
+        const reviewsData = await reviewsResponse.json();
+        setReviews(reviewsData.reviews);
+
+        setLoading(false);
+      })();
     }
   }, [id]);
 
@@ -45,7 +45,7 @@ export default function ProductDetailsPage() {
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <ProductPage product={product} />
 
-        <ReviewsContainer reviews={reviews} />
+        <ReviewsContainer productId={product.id} />
       </div>
     </div>
   );

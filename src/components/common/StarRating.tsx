@@ -1,22 +1,61 @@
-import { Product } from "@prisma/client";
-import React from "react";
+import React, { useState } from "react";
 
 type Props = {
-  product: Product;
+  score: number;
   className?: string;
   style?: React.CSSProperties;
+  onChange?: (newScore: number) => void;
 };
 
-export default function StarRating({ product, className, style }: Props) {
+export default function StarRating({
+  score,
+  className,
+  style,
+  onChange,
+}: Props) {
+  const [hoveredScore, setHoveredScore] = useState<number | null>(null);
+  const [persistedScore, setPersistedScore] = useState<number>(score);
+
+  const handleClick = (newScore: number) => {
+    if (onChange) {
+      setPersistedScore(newScore);
+      onChange(newScore);
+    }
+  };
+
+  const handleMouseEnter = (index: number) => {
+    if (onChange) {
+      setHoveredScore(index + 1);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (onChange) {
+      setHoveredScore(null);
+    }
+  };
+
+  const displayScore = hoveredScore ?? persistedScore;
+
   return (
-    <div className={`flex items-center ${className || ""}`} style={style}>
+    <div
+      className={`flex items-center ${className || ""}`}
+      style={style}
+      onMouseLeave={handleMouseLeave}
+    >
       {Array.from({ length: 5 }, (_, i) => {
-        const score = product.averageScore;
-        const isFullStar = i < Math.floor(score);
-        const isHalfStar = !isFullStar && i < Math.floor(score + 0.5);
+        const isFullStar = i < Math.floor(displayScore);
+        const isHalfStar = !isFullStar && i < Math.floor(displayScore + 0.5);
 
         return (
-          <span key={i} className="relative inline-block w-5 h-5">
+          <span
+            key={i}
+            className={`relative inline-block w-5 h-5 ${
+              onChange ? "cursor-pointer" : ""
+            }`}
+            onClick={() => handleClick(i + 1)}
+            onMouseEnter={() => handleMouseEnter(i)}
+          >
             <svg
               className="w-5 h-5 text-gray-300 absolute top-0 left-0 z-0"
               xmlns="http://www.w3.org/2000/svg"

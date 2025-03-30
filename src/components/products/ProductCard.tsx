@@ -31,7 +31,7 @@ export default function ProductCard({ product }: Props) {
             ${product.price.toFixed(2)}
           </div>
           <div className="flex justify-center items-center space-x-2 mb-4">
-            <StarRating product={product} />
+            <StarRating score={product.averageScore} />
             <span className="text-sm text-gray-700 whitespace-nowrap">
               ({product._count.reviews} Reviews)
             </span>
