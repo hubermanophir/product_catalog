@@ -9,7 +9,6 @@ interface ProductPageProps {
 export default function ProductPage({ product }: ProductPageProps) {
   return (
     <div className="flex flex-col md:flex-row">
-      {/* Product Image */}
       <div className="md:w-1/2">
         <img
           src={product.imageUrl}
@@ -17,8 +16,6 @@ export default function ProductPage({ product }: ProductPageProps) {
           className="w-full h-full object-cover"
         />
       </div>
-
-      {/* Product Details */}
       <div className="md:w-1/2 p-6 flex flex-col">
         <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
         <p className="text-gray-700 mb-4">{product.description}</p>
