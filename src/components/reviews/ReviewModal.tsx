@@ -4,10 +4,9 @@ import Button from "../common/Button";
 
 type Props = {
   productId: string;
-  onReviewAdded: () => void;
 };
 
-export default function ReviewModal({ productId, onReviewAdded }: Props) {
+export default function ReviewModal({ productId }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [title, setTitle] = useState("");
@@ -22,7 +21,6 @@ export default function ReviewModal({ productId, onReviewAdded }: Props) {
 
     setLoading(true);
     try {
-      console.log({ rating, comment, title, productId });
       const response = await fetch(`/api/reviews`, {
         method: "POST",
         headers: {
@@ -41,7 +39,6 @@ export default function ReviewModal({ productId, onReviewAdded }: Props) {
         setTitle("");
         setComment("");
         setRating(0);
-        onReviewAdded(); // Refresh reviews
       } else {
         alert("Failed to add review. Please try again.");
       }

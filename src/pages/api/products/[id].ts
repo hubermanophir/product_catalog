@@ -11,11 +11,9 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        console.log({ id });
         const product = await prisma.product.findUnique({
           where: { id },
         });
-        console.log({ product });
 
         if (!product) {
           return res.status(404).json({

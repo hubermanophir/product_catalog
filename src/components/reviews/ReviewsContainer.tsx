@@ -75,7 +75,7 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
   return (
     <div ref={containerRef} className="p-6 border-t h-96 overflow-y-auto">
       <h2 className="text-xl font-bold mb-4">Reviews</h2>
-      <ReviewModal productId={productId} onReviewAdded={fetchReviews} />
+      <ReviewModal productId={productId} />
       {reviews.length > 0 ? (
         <ul className="space-y-4">
           {reviews.map((review) => (

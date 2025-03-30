@@ -92,10 +92,8 @@ export default async function handler(
           price: price as number,
         },
       });
-      console.log("Created Item");
       return res.status(200).json({ data: "Created Item" });
     } catch (error) {
-      console.log("error");
       return res.status(500).json({ error: "Failed to fetch products" });
     }
   } else {

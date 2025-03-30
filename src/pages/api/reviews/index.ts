@@ -9,7 +9,6 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const { productId, userId, rating, comment, title } = req.body;
-    console.log({ body: req.body });
     if (!productId || typeof rating !== "number" || !comment || !title) {
       return res.status(400).json({ error: "Missing or invalid fields" });
     }
