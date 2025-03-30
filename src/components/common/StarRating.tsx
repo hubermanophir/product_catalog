@@ -11,7 +11,7 @@ export default function StarRating({ score, onChange }: Props) {
     <Rating
       value={score}
       onChange={onChange ? (_, newValue) => onChange(newValue || 0) : undefined}
-      precision={1}
+      precision={0.1}
       readOnly={!onChange}
     />
   );
