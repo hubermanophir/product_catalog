@@ -14,7 +14,7 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const reviewsPerPage = 2;
+  const reviewsPerPage = 3;
 
   const fetchReviews = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -46,25 +46,36 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
     }
   }, [productId, currentPage, hasMore, loading]);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
     if (scrollTop + clientHeight >= scrollHeight - 10 && hasMore && !loading) {
       fetchReviews();
     }
-  };
+  }, [fetchReviews, hasMore, loading]);
 
+  // Fetch the first page when the component mounts or productId changes
   useEffect(() => {
+    setReviews([]);
+    setCurrentPage(1);
+    setHasMore(true);
     fetchReviews();
-  }, [fetchReviews]);
+  }, [productId]);
+
+  // Attach scroll event listener
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
-    <div
-      ref={containerRef}
-      onScroll={handleScroll}
-      className="p-6 border-t h-96 overflow-y-auto"
-    >
+    <div ref={containerRef} className="p-6 border-t h-96 overflow-y-auto">
       <h2 className="text-xl font-bold mb-4">Reviews</h2>
       <ReviewModal productId={productId} onReviewAdded={fetchReviews} />
       {reviews.length > 0 ? (
