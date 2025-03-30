@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import ProductCard from "./ProductCard";
 import { Product } from "@prisma/client";
 
@@ -9,12 +9,25 @@ type Props = {
 
 export default function ProductsLayoutContainer({ products }: Props) {
   return (
-    <Grid container spacing={3} justifyContent="center" alignItems="center">
-      {products.map((product) => (
-        <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-          <ProductCard product={product} />
-        </Grid>
-      ))}
-    </Grid>
+    <Container maxWidth="xl">
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+            xl: "repeat(5, 1fr)",
+          },
+          gap: 3,
+          justifyItems: "center",
+        }}
+      >
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </Box>
+    </Container>
   );
 }

@@ -2,6 +2,7 @@ import { Product } from "@prisma/client";
 import React from "react";
 import { useRouter } from "next/router";
 import StarRating from "../common/StarRating";
+import { Card, CardContent, CardMedia, Typography, Box } from "@mui/material";
 
 type Props = {
   product: Product & { _count: { reviews: number } };
@@ -14,35 +15,57 @@ export default function ProductCard({ product }: Props) {
     router.push(`/products/${product.id}`);
   };
 
-  return (
-    <div
-      className="w-80 h-auto rounded overflow-hidden shadow-lg p-4 bg-white flex flex-col items-center cursor-pointer"
-      onClick={handleCardClick}
+return (
+    <Card
+        sx={{
+            width: 300,
+            height: 400,
+            display: 'flex',
+            flexDirection: 'column',
+            cursor: 'pointer',
+        }}
+        onClick={handleCardClick}
     >
-      <img
-        className="w-64 h-64 object-contain mb-4"
-        src={product.imageUrl}
-        alt={product.name}
-      />
-      <div className="text-center flex flex-col items-center flex-1 justify-between">
-        <div>
-          <div className="font-bold text-xl mb-2">{product.name}</div>
-          <div className="text-lg font-bold text-green-600 mb-2">
-            ${product.price.toFixed(2)}
-          </div>
-          <div className="flex justify-center items-center space-x-2 mb-4">
-            <StarRating score={product.averageScore} />
-            <span className="text-sm text-gray-700 whitespace-nowrap">
-              ({product._count.reviews} Reviews)
-            </span>
-          </div>
-        </div>
-        <div className="flex justify-center mt-auto">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
-            {product.category}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+        <CardMedia
+            component="img"
+            sx={{
+                height: 200,
+                objectFit: 'contain',
+                padding: 2
+            }}
+            image={product.imageUrl}
+            alt={product.name}
+        />
+        <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+            <Typography gutterBottom variant="h6" component="div">
+                {product.name}
+            </Typography>
+            <Typography variant="body1" color="primary" fontWeight="bold" gutterBottom>
+                ${product.price.toFixed(2)}
+            </Typography>
+            <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+                <StarRating score={product.averageScore} />
+                <Typography variant="caption" color="text.secondary">
+                    ({product._count.reviews} Reviews)
+                </Typography>
+            </Box>
+            <Box mt={2}>
+                <Typography
+                    variant="body2"
+                    bgcolor="background.paper"
+                    sx={{
+                        display: 'inline-block',
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: 4,
+                        fontSize: '0.75rem',
+                        fontWeight: 'medium',
+                    }}
+                >
+                    {product.category}
+                </Typography>
+            </Box>
+        </CardContent>
+    </Card>
+);
 }
