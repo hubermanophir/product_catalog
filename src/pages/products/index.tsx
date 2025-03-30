@@ -1,5 +1,4 @@
 import ProductsLayoutContainer from "@/components/products/ProductsLayoutContainer";
-// Removed unused ProductQuery import
 import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

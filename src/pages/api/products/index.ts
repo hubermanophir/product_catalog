@@ -32,9 +32,8 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const parsedPage = parseInt(req.query.page as string) || 1;
-      const page = parsedPage < 1 ? 1 : parsedPage;
-      const limit = parseInt(req.query.limit as string) || 8;
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.max(1, parseInt(req.query.limit as string) || 8);
       const skip = (page - 1) * limit;
       const products = await prisma.product.findMany({
         skip,

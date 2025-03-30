@@ -21,11 +21,9 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     if (id) {
       (async () => {
-        // Fetch product details
         const productResponse = await fetch(`/api/products/${id}`);
         const productsData = await productResponse.json();
         setProduct(productsData.product);
-        // Fetch product reviews
         const reviewsResponse = await fetch(`/api/reviews/${id}`);
 
         const reviewsData = await reviewsResponse.json();

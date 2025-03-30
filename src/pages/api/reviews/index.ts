@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { productId, userId, rating, comment, title } = req.body;
+    const { productId, rating, comment, title } = req.body;
     if (!productId || typeof rating !== "number" || !comment || !title) {
       return res.status(400).json({ error: "Missing or invalid fields" });
     }

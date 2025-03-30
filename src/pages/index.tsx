@@ -8,5 +8,5 @@ export default function Home() {
     router.push("/products");
   }, [router]);
 
-  return null; // Optionally, you can add a loading indicator here
+  return null;
 }
