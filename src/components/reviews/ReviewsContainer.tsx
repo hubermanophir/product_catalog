@@ -71,14 +71,16 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
         <Button
           onClick={handlePreviousPage}
           disabled={currentPage === 1 || loading}
-          children={"Previous"}
-        />
+        >
+          Previous
+        </Button>
         <span className="text-gray-700">Page {currentPage}</span>
         <Button
           onClick={handleNextPage}
           disabled={!hasMore || loading}
-          children={"Next"}
-        />
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

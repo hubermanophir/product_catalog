@@ -70,11 +70,21 @@ export default async function handler(
       const { name, price, category, description, imageUrl }: Partial<Product> =
         req.body;
       const missingFields = [];
-      !name && missingFields.push("name");
-      !price && missingFields.push("price");
-      !category && missingFields.push("category");
-      !description && missingFields.push("description");
-      !imageUrl && missingFields.push("imageUrl");
+      if (!name) {
+        missingFields.push("name");
+      }
+      if (!price) {
+        missingFields.push("price");
+      }
+      if (!category) {
+        missingFields.push("category");
+      }
+      if (!description) {
+        missingFields.push("description");
+      }
+      if (!imageUrl) {
+        missingFields.push("imageUrl");
+      }
 
       if (missingFields.length > 0) {
         return res.status(400).json({
@@ -93,7 +103,9 @@ export default async function handler(
       });
       return res.status(200).json({ data: "Created Item" });
     } catch (error) {
-      return res.status(500).json({ error: "Failed to fetch products" });
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch products" + error });
     }
   } else {
     res.setHeader("Allow", ["GET", "POST"]);

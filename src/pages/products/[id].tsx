@@ -4,18 +4,10 @@ import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-type Review = {
-  id: string;
-  content: string;
-  rating: number;
-  createdAt: string;
-};
-
 export default function ProductDetailsPage() {
   const router = useRouter();
   const { id } = router.query;
   const [product, setProduct] = useState<Product | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,11 +16,6 @@ export default function ProductDetailsPage() {
         const productResponse = await fetch(`/api/products/${id}`);
         const productsData = await productResponse.json();
         setProduct(productsData.product);
-        const reviewsResponse = await fetch(`/api/reviews/${id}`);
-
-        const reviewsData = await reviewsResponse.json();
-        setReviews(reviewsData.reviews);
-
         setLoading(false);
       })();
     }
