@@ -55,7 +55,6 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
     }
   }, [fetchReviews, hasMore, loading]);
 
-  // Fetch the first page when the component mounts or productId changes
   useEffect(() => {
     setReviews([]);
     setCurrentPage(1);
@@ -63,7 +62,6 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
     fetchReviews();
   }, [productId]);
 
-  // Attach scroll event listener
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
