@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReviewModal from "./ReviewModal";
 import ReviewCard from "./ReviewCard";
 import { Review } from "@prisma/client";
+import Button from "../common/Button";
 
 interface ReviewsContainerProps {
   productId: string;
@@ -12,13 +13,10 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const reviewsPerPage = 3;
 
   const fetchReviews = useCallback(async () => {
-    if (loading || !hasMore) return;
-
     setLoading(true);
     try {
       const response = await fetch(
@@ -26,54 +24,38 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
       );
       const data = await response.json();
 
-      if (data.reviews.length < reviewsPerPage) {
+      if (currentPage * reviewsPerPage >= data.totalReviews) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
       }
 
-      setReviews((prevReviews) => {
-        const existingIds = new Set(prevReviews.map((review) => review.id));
-        const newReviews = data.reviews.filter(
-          (review: Review) => !existingIds.has(review.id)
-        );
-        return [...prevReviews, ...newReviews];
-      });
-
-      setCurrentPage((prevPage) => prevPage + 1);
+      setReviews(data.reviews);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
       setLoading(false);
     }
-  }, [productId, currentPage, hasMore, loading]);
-
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current) return;
-
-    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-    if (scrollTop + clientHeight >= scrollHeight - 10 && hasMore && !loading) {
-      fetchReviews();
-    }
-  }, [fetchReviews, hasMore, loading]);
+  }, [productId, currentPage]);
 
   useEffect(() => {
-    setReviews([]);
-    setCurrentPage(1);
-    setHasMore(true);
     fetchReviews();
-  }, [productId]);
+  }, [fetchReviews]);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll]);
+  const handleNextPage = () => {
+    if (hasMore) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
 
   return (
-    <div ref={containerRef} className="p-6 border-t h-96 overflow-y-auto">
+    <div className="p-6 border-t">
       <h2 className="text-xl font-bold mb-4">Reviews</h2>
       <ReviewModal productId={productId} />
       {reviews.length > 0 ? (
@@ -85,10 +67,19 @@ export default function ReviewsContainer({ productId }: ReviewsContainerProps) {
       ) : (
         <p className="text-gray-500">No reviews yet.</p>
       )}
-      {loading && <p className="text-center text-gray-500 mt-4">Loading...</p>}
-      {!hasMore && (
-        <p className="text-center text-gray-500 mt-4">No more reviews.</p>
-      )}
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1 || loading}
+          children={"Previous"}
+        />
+        <span className="text-gray-700">Page {currentPage}</span>
+        <Button
+          onClick={handleNextPage}
+          disabled={!hasMore || loading}
+          children={"Next"}
+        />
+      </div>
     </div>
   );
 }
