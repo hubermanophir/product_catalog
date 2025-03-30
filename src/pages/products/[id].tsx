@@ -1,30 +1,52 @@
-import { ProductQuery } from "@/types/productsTypes";
+import ProductPage from "@/components/products/ProductPage";
+import ReviewsContainer from "@/components/reviews/ReviewsContainer";
+import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function Page() {
+type Review = {
+  id: string;
+  content: string;
+  rating: number;
+  createdAt: string;
+};
+
+export default function ProductDetailsPage() {
   const router = useRouter();
-  const query = router.query as ProductQuery;
-  const [data, setData] = useState(null);
+  const { id } = router.query;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (query.id) {
-      fetch(`/api/products/${query.id}`)
+    if (id) {
+      // Fetch product details
+      fetch(`/api/products/${id}`)
         .then((response) => response.json())
         .then((data) => {
-          setData(data);
+          console.log({ data });
+          setProduct(data.product);
           setLoading(false);
         });
+
+      // Fetch product reviews
+      fetch(`/api/reviews/${id}`)
+        .then((response) => response.json())
+        .then((data) => setReviews(data.reviews));
     }
-  }, [query.id]);
+  }, [id]);
 
   if (loading) return <p>Loading...</p>;
 
+  if (!product) return <p>Product not found.</p>;
+
   return (
-    <div>
-      <h1>Data from API</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <ProductPage product={product} />
+
+        <ReviewsContainer reviews={reviews} />
+      </div>
     </div>
   );
 }

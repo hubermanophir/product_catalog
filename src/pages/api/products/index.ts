@@ -1,5 +1,30 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
+import { Product } from "@prisma/client";
+
+export type GetProductsRes = {
+  products: ({
+    _count: {
+      reviews: number;
+    };
+  } & {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+    category: string;
+    createdAt: Date;
+    updatedAt: Date;
+    averageScore: number;
+  })[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,13 +32,13 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const parsedPage = parseInt(req.query.page as string) || 1;
+      const page = parsedPage < 1 ? 1 : parsedPage;
+      const limit = parseInt(req.query.limit as string) || 8;
       const skip = (page - 1) * limit;
-
       const products = await prisma.product.findMany({
         skip,
-        take: limit,
+        take: limit >= 20 || limit < 0 ? 20 : limit,
         orderBy: {
           createdAt: "desc",
         },
@@ -43,23 +68,37 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     try {
+      const { name, price, category, description, imageUrl }: Partial<Product> =
+        req.body;
+      const missingFields = [];
+      !name && missingFields.push("name");
+      !price && missingFields.push("price");
+      !category && missingFields.push("category");
+      !description && missingFields.push("description");
+      !imageUrl && missingFields.push("imageUrl");
+
+      if (missingFields.length > 0) {
+        return res.status(400).json({
+          data: `Missing required fields: ${missingFields.join(", ")}`,
+        });
+      }
+
       await prisma.product.create({
         data: {
-          category: "sports",
-          description: "sport Item",
-          imageUrl: "image",
-          name: "hat",
-          price: 20,
+          category: category as string,
+          description: description as string,
+          imageUrl: imageUrl as string,
+          name: name as string,
+          price: price as number,
         },
       });
       console.log("Created Item");
-      return res.status(200).json({ data:"Created Item" });
+      return res.status(200).json({ data: "Created Item" });
     } catch (error) {
       console.log("error");
       return res.status(500).json({ error: "Failed to fetch products" });
     }
   } else {
-    // Handle unsupported HTTP methods
     res.setHeader("Allow", ["GET", "POST"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
