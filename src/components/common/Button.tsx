@@ -1,27 +1,21 @@
 import React from "react";
+import { Button as MuiButton } from "@mui/material";
 
-interface ButtonProps {
+interface Props {
   onClick: () => void;
   disabled?: boolean;
-  className?: string;
   children: React.ReactNode;
 }
 
-export default function Button({
-  onClick,
-  disabled = false,
-  className = "",
-  children,
-}: ButtonProps) {
+export default function Button({ onClick, disabled, children }: Props) {
   return (
-    <button
+    <MuiButton
       onClick={onClick}
       disabled={disabled}
-      className={`px-4 py-2 bg-gray-200 rounded transition-colors ${
-        disabled ? "opacity-50" : "hover:bg-gray-300"
-      } ${className}`}
+      variant="contained"
+      color="primary"
     >
       {children}
-    </button>
+    </MuiButton>
   );
 }

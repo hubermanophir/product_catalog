@@ -1,7 +1,7 @@
-import { Product } from "@prisma/client";
 import React from "react";
+import { Grid } from "@mui/material";
 import ProductCard from "./ProductCard";
-import styles from "./ProductsLayoutContainer.module.css";
+import { Product } from "@prisma/client";
 
 type Props = {
   products: (Product & { _count: { reviews: number } })[];
@@ -9,16 +9,12 @@ type Props = {
 
 export default function ProductsLayoutContainer({ products }: Props) {
   return (
-    <div className="flex flex-col min-h-[80vh]">
-      <div className="flex-grow">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 my-8">
-        {products.map((product) => (
-        <div className="flex justify-center" key={product.id}>
+    <Grid container spacing={3} justifyContent="center" alignItems="center">
+      {products.map((product) => (
+        <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
           <ProductCard product={product} />
-        </div>
-        ))}
-      </div>
-      </div>
-    </div>
+        </Grid>
+      ))}
+    </Grid>
   );
 }
