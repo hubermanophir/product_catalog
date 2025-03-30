@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { GetProductsRes } from "../api/products";
 import Button from "@/components/common/Button";
+import { Headline } from "@/components/products/Headline";
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +18,6 @@ export default function Page() {
   >(null);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(true);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -32,7 +32,12 @@ export default function Page() {
   };
 
   useEffect(() => {
-    setLoading(true);
+    if (router.pathname === "/products" && !query.page) {
+      router.replace("?page=1");
+    }
+  }, [router, query.page]);
+
+  useEffect(() => {
     (async () => {
       const response = await fetch(
         `/api/products?page=${currentPage}&limit=${productsPerPage}`
@@ -45,14 +50,12 @@ export default function Page() {
           ? Math.ceil(res.pagination.total / productsPerPage)
           : 1
       );
-      setLoading(false);
     })();
   }, [currentPage]);
 
-  if (loading) return <p>Loading...</p>;
-
   return (
     <div>
+      <Headline />
       {products && products.length > 0 ? (
         <ProductsLayoutContainer products={products} />
       ) : (

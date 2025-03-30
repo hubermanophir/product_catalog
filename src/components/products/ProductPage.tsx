@@ -1,5 +1,6 @@
 import { Product } from "@prisma/client";
 import React from "react";
+import StarRating from "../common/StarRating";
 
 interface ProductPageProps {
   product: Product;
@@ -27,6 +28,9 @@ export default function ProductPage({ product }: ProductPageProps) {
         <p className="text-sm text-gray-500 mb-4">
           Category: <span className="font-semibold">{product.category}</span>
         </p>
+        <div className="mb-4">
+          <StarRating score={product.averageScore} />
+        </div>
       </div>
     </div>
   );
